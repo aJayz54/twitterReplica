@@ -93,8 +93,15 @@ class App extends Component {
 
   handleLike(item) {
     var tempLikes = item.likes.slice();
+    var user = null;
+    for (let i = 0; i < Object.keys(this.state.users).length; i++) {
+      if (this.state.users[i].email === this.state.currentEmail) {
+        this.setState({currentUser: this.state.users[i].id});
+        user = this.state.users[i].id;
+      };
+    }
     const id = item.id;
-    tempLikes.push(this.state.currentUser);
+    tempLikes.push(user);
     const newTweet = {
       id: item.id,
       user: item.user,
@@ -115,7 +122,14 @@ class App extends Component {
   handleUnlike(item) {
     var tempLikes = item.likes.slice();
     const id = item.id;
-    tempLikes.splice(item.likes.indexOf(this.state.currentUser), 1);
+    var user = null;
+    for (let i = 0; i < Object.keys(this.state.users).length; i++) {
+      if (this.state.users[i].email === this.state.currentEmail) {
+        this.setState({currentUser: this.state.users[i].id});
+        user = this.state.users[i].id;
+      };
+    }
+    tempLikes.splice(item.likes.indexOf(user), 1);
     const newTweet = {
       id: item.id,
       user: item.user,
