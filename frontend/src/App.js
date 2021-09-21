@@ -17,8 +17,9 @@ class App extends Component {
       registerUsername: '',
       loginEmail: '',
       loginPassword: '',
-      loginUsername: '',
-      currentUsername: '',
+      loginError: false,
+      registerError: false,
+      currentEmail: '',
       currentUser:null,
       registerUser: false,
     };
@@ -33,7 +34,6 @@ class App extends Component {
     this.register = this.register.bind(this);
     this.handleLoginEmail = this.handleLoginEmail.bind(this);
     this.handleLoginPassword = this.handleLoginPassword.bind(this);
-    this.handleLoginUsername=this.handleLoginUsername.bind(this);
     this.login = this.login.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleLike = this.handleLike.bind(this);
@@ -56,7 +56,7 @@ class App extends Component {
       .catch((err) => console.log(err))
     
     for (let i = 0; i < Object.keys(this.state.users).length; i++) {
-      if (this.state.users[i].username == this.state.currentUsername) {
+      if (this.state.users[i].email === this.state.currentEmail) {
         this.setState({currentUser: this.state.users[i].id});
       };
     }
@@ -71,7 +71,7 @@ class App extends Component {
     var user = null;
     var date = currentDate.getFullYear()+ '-' + (currentDate.getMonth()+1)+ '-' + currentDate.getDate()+'T' + currentDate.getHours()+":"+currentDate.getMinutes()+":00Z"
     for (let i = 0; i < Object.keys(this.state.users).length; i++) {
-      if (this.state.users[i].username == this.state.currentUsername) {
+      if (this.state.users[i].email === this.state.currentEmail) {
         this.setState({currentUser: this.state.users[i].id});
         user = this.state.users[i].id;
       };
@@ -175,7 +175,7 @@ class App extends Component {
         if (data.key) {
           localStorage.clear();
           localStorage.setItem('token', data.key)
-          this.setState({currentUsername: user.username})
+          this.setState({currentEmail: user.email})
           this.setState({isLoggedIn : true});
           this.refreshList();
         } else {
@@ -183,6 +183,7 @@ class App extends Component {
           this.setState({registerPassword1: ''});
           this.setState({registerPassword2: ''});
           this.setState({registerUsername: ''});
+          this.setState({registerError: 'true'});
           localStorage.clear();
         }
         });
@@ -196,16 +197,11 @@ class App extends Component {
     this.setState({loginPassword: event.target.value})
   }
 
-  handleLoginUsername(event) {
-    this.setState({loginUsername: event.target.value})
-  }
-
   login(event) {
     event.preventDefault();
 
     const user = {
       email: this.state.loginEmail,
-      username: this.state.loginUsername,
       password: this.state.loginPassword,
     };
 
@@ -222,13 +218,13 @@ class App extends Component {
         if (data.key) {
           localStorage.clear();
           localStorage.setItem('token', data.key);
-          this.setState({currentUsername : user.username})
+          this.setState({currentEmail : user.email})
           this.setState({isLoggedIn : true});
           this.refreshList();
         } else {
           this.setState({loginEmail: ''});
           this.setState({loginPassword: ''});
-          this.setState({loginUsername: ''});
+          this.setState({loginError: true});
           localStorage.clear();
         }
         });
@@ -240,20 +236,20 @@ class App extends Component {
     return tweetList.map((item) => (
       <li key = {item.id}
       className = "list-group-item d-flex justify-content-between align-items-center">
-        <span class="tweets">
-          <img class="profile-pic-post" src={img} alt="profilepic"/>
+        <span className="tweets">
+          <img className="profile-pic-post" src={img} alt="profilepic"/>
           <h2>{this.state.users[item.user - 1].username} </h2>
           <br/>
               {item.post_text} 
           <br/>
           {item.likes.includes(this.state.currentUser) && 
             <div>
-              <button class = "btn btn-primary">{item.likes.length} Likes </button>
-              <button class = "btn btn-danger" onClick={()=>this.handleUnlike(item)}>Unlike</button>
+              <button className = "btn btn-primary">{item.likes.length} Likes </button>
+              <button className = "btn btn-danger" onClick={()=>this.handleUnlike(item)}>Unlike</button>
             </div>
           }
           {!item.likes.includes(this.state.currentUser) &&
-            <button class = "btn btn-primary" onClick={()=>this.handleLike(item)}>{item.likes.length} Likes</button>
+            <button className = "btn btn-primary" onClick={()=>this.handleLike(item)}>{item.likes.length} Likes</button>
           }
         </span>
       </li>
@@ -266,14 +262,14 @@ class App extends Component {
       <div>
       { this.state.isLoggedIn && 
       <main className="bg-white">
-        <h1 className="text-black text-center bg-info my-4">Twitter</h1>
+        <h1 className="text-black text-center bg-info my-4">Twitter Replica</h1>
         <div class = "input-group mb-3 col-md-6 col-sm-10 mx-auto">
-          <input type="text" class = "form-control form-control-lg flex-nowrap mx-auto" placeholder = "enter tweet here" value = {this.state.newText} onChange = {this.handleTextChange}/>
-          <div class = "input-group-append">
-            <button class="btn btn-outline-secondary" type="button" id="button-addon2" onClick={this.handleSubmit}>Tweet!</button>
+          <input type="text" className = "form-control form-control-lg flex-nowrap mx-auto" placeholder = "enter tweet here" value = {this.state.newText} onChange = {this.handleTextChange}/>
+          <div className = "input-group-append">
+            <button className="btn btn-outline-secondary" type="button" id="button-addon2" onClick={this.handleSubmit}>Tweet!</button>
           </div>
         </div>
-        <div class="flex-container">
+        <div className="flex-container">
           <div className="col-md-6 col-sm-10 mx-auto p-0 text-wrap">
                 {this.renderTweets()}
           </div>
@@ -282,23 +278,22 @@ class App extends Component {
       }
       { !this.state.isLoggedIn && !this.state.registerUser &&
       <main className>
-        <h1 className="text-black text-center bg-info my-4">Twitter</h1>
+        <h1 className="text-black text-center bg-info my-4">Twitter Replica</h1>
         <div class="wrapper fadeInDown">
           <div id = "formContent">
             <form>
-              <h2>Sign in! </h2>
+              <h2>Sign in </h2>
+              {this.state.loginError === true && <h2 className="text-danger"> Cannot Login With the Provided Credentials</h2>}
               <br/>
-              <input type = "text" id = "email" class = "fadeIn second" name = "email" placeholder = "email" value = {this.state.loginEmail} onChange = {this.handleLoginEmail}/>
+              <input type = "text" id = "email" className = "fadeIn second" name = "email" placeholder = "email" value = {this.state.loginEmail} onChange = {this.handleLoginEmail}/>
               <br/>
-              <input type = "username" id = "username" class = "fadeIn third" name = "username" placeholder = "username" value = {this.state.loginUsername} onChange = {this.handleLoginUsername}/>
+              <input type = "password" id = "password" className = "fadeIn third" name = "password" placeholder = "password" value = {this.state.loginPassword} onChange = {this.handleLoginPassword}/>
               <br/>
-              <input type = "password" id = "password" class = "fadeIn fourth" name = "password" placeholder = "password" value = {this.state.loginPassword} onChange = {this.handleLoginPassword}/>
-              <br/>
-              <input type = "submit" class = "fadeIn fifth" value = "Log in" onClick={this.login}/>
+              <input type = "submit" className = "fadeIn fourth" value = "Sign In" onClick={this.login}/>
             </form>
             <div id="formFooter">
               <br/>
-              <button class = "underlineHover" onClick={this.handleChange}>Register</button>
+              <button className = "underlineHover" onClick={this.handleChange}>Register</button>
             </div>
           </div>
         </div>
@@ -306,30 +301,30 @@ class App extends Component {
       }
       { !this.state.isLoggedIn && this.state.registerUser &&
       <main className>
-      <h1 className="text-black text-center my-4">Twitter</h1>
-      <div class="wrapper fadeInDown">
-        <div id = "formContent">
-          <form>
-            <h2>Register </h2>
-            <br/>
-            <input type = "text" id = "regemail" class = "fadeIn second" name = "email" placeholder = "email" value = {this.state.registerEmail} onChange = {this.handleRegEmail}/>
-            <br/>
-            <input type = "username" id = "regusername" class = "fadeIn third" name = "username" placeholder = "username" value = {this.state.registerUsername} onChange = {this.handleRegUsername}/>
-            <br/>
-            <input type = "password" id = "password1" class = "fadeIn fourth" name = "password1" placeholder = "password" value = {this.state.registerPassword1} onChange = {this.handleRegPassword1}/>
-            <br/>
-            <input type = "password" id = "password2" class = "fadeIn fourth" name = "password2" placeholder = "enter password again!" value = {this.state.registerPassword2} onChange = {this.handleRegPassword2}/>
-            <br/>
-            <input type = "submit" class = "fadeIn fifth" value = "Register!" onClick={this.register}/>
-          </form>
-          <div id="formFooter">
-            <button class = "underlineHover" onClick={this.handleChange}>Forgot Password?</button>
-            <br/>
-            <button type="submit" class = "underlineHover" onClick={this.handleChange}>Already Have An Account?</button>
+        <h1 className="text-black text-center bg-info my-4">Twitter Replica</h1>
+        <div class="wrapper fadeInDown">
+          <div id = "formContent">
+            <form>
+              <h2>Register </h2>
+              <br/>
+              {this.state.registerError && <h2 className = "text-danger">Username or Email already taken!</h2>}
+              <br/>
+              <input type = "text" id = "regemail" className = "fadeIn second" name = "email" placeholder = "email" value = {this.state.registerEmail} onChange = {this.handleRegEmail}/>
+              <br/>
+              <input type = "username" id = "regusername" className = "fadeIn third" name = "username" placeholder = "username" value = {this.state.registerUsername} onChange = {this.handleRegUsername}/>
+              <br/>
+              <input type = "password" id = "password1" className = "fadeIn fourth" name = "password1" placeholder = "password" value = {this.state.registerPassword1} onChange = {this.handleRegPassword1}/>
+              <br/>
+              <input type = "password" id = "password2" className = "fadeIn fourth" name = "password2" placeholder = "enter password again" value = {this.state.registerPassword2} onChange = {this.handleRegPassword2}/>
+              <br/>
+              <input type = "submit" className = "fadeIn fifth" value = "Register!" onClick={this.register}/>
+            </form>
+            <div id="formFooter">
+              <button type="submit" className = "underlineHover" onClick={this.handleChange}>Already Have An Account?</button>
+            </div>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
       }
       </div>
     );
