@@ -17,15 +17,22 @@ First, cd into the project directory in your terminal.
 Initiate a virtual environment with: pipenv shell
 Then, download the requirements with: pipenv install -r requirements.txt
 After this, you'll want to open up another terminal window so you can host both the backend and the frontend. 
-In one terminal window, run: 
-cd backend
-python manage.py runserver 
-(This is the Django server)
+In one terminal window, run:   
 
-In the other terminal window, run:
-cd frontend
-npm start 
-(This is the React frontend) 
+cd backend   
+
+python manage.py runserver   
+
+(This is the Django server)  
+
+
+In the other terminal window, run:  
+
+cd frontend  
+
+npm start   
+
+(This is the React frontend)   
 
 Then, in Chrome, go to http://localhost:3000 to interact with the webapp. If you want to access the api, you can go to http://localhost:8000/api/users or http://localhost:8000/api/tweets respectively. 
 
