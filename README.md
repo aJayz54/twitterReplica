@@ -34,5 +34,5 @@ npm start
 
 (This is the React frontend)   
 
-Then, in Chrome, go to http://localhost:3000 to interact with the webapp. If you want to access the api, you can go to http://localhost:8000/api/users or http://localhost:8000/api/tweets respectively. 
+Then, in Chrome, go to http://localhost:3000 to interact with the webapp. If you want to access the api, you can go to http://localhost:8000/api/users or http://localhost:8000/api/tweets for the user database or the tweets database respectively. 
 
