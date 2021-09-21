@@ -38,6 +38,7 @@ class App extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleLike = this.handleLike.bind(this);
     this.handleUnlike = this.handleUnlike.bind(this);
+    this.logout=this.logout.bind(this);
   }
 
   componentDidMount() {
@@ -197,6 +198,23 @@ class App extends Component {
     this.setState({loginPassword: event.target.value})
   }
 
+  logout(event) {
+    event.preventDefault();
+    this.setState({
+      registerEmail: '',
+      registerPassword1: '',
+      registerPassword2: '',
+      registerUsername: '',
+      loginEmail: '',
+      loginPassword: '',
+      loginError: false,
+      registerError: false,
+      currentEmail: '',
+      currentUser:null,
+      registerUser: false,
+      isLoggedIn: false,
+    });
+  }
   login(event) {
     event.preventDefault();
 
@@ -274,6 +292,9 @@ class App extends Component {
                 {this.renderTweets()}
           </div>
         </div>
+        <div className = "d-flex justify-content-center">
+          <input type = "submit" className = "fadeIn fourth" value = "Sign Out" onClick={this.logout}/>
+        </div>
       </main>
       }
       { !this.state.isLoggedIn && !this.state.registerUser &&
@@ -289,7 +310,7 @@ class App extends Component {
               <br/>
               <input type = "password" id = "password" className = "fadeIn third" name = "password" placeholder = "password" value = {this.state.loginPassword} onChange = {this.handleLoginPassword}/>
               <br/>
-              <input type = "submit" className = "fadeIn fourth" value = "Sign In" onClick={this.login}/>
+              <input type = "submit" className = "fadeIn second" value = "Sign In" onClick={this.login}/>
             </form>
             <div id="formFooter">
               <br/>
